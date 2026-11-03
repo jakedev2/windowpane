@@ -1,0 +1,15 @@
+{
+  "about": "Counters read from 'ACHERON EX TOP 1 - Frame Window Counter' (1280x720, 60 fps, 'Vanilla 240 FPS'). Digits decoded from the sidebar at 30 fps (clustering the glyphs, row colours known) and checked by eye against 5 frames. The reference counts clicks only. Its top bucket is labelled 9-10; its CPS readout ('x/5/N CPS', N = clicks so far) shows how many clicks had happened, so clicks that are in no bucket can be derived (N minus the counted ones). The reference macro is not byte-identical to the zBot file (about 193 clicks in the video vs about 201 presses in the results), so compare shares, not single clicks.",
+  "level": "Acheron",
+  "tps": 240,
+  "bucket_order": ["1", "2", "3", "4", "5-6", "7-8", "9-10"],
+  "final": { "1": 1, "2": 2, "3": 13, "4": 25, "5-6": 48, "7-8": 42, "9-10": 27 },
+  "final_counted": 158,
+  "final_clicks_cps": 193,
+  "checkpoints": [
+    { "percent": 18.33, "video_seconds": 20, "counts": { "1": 1, "2": 0, "3": 1, "4": 4, "5-6": 7, "7-8": 9, "9-10": 3 }, "clicks_cps": 39 },
+    { "percent": 34.95, "video_seconds": 30, "counts": { "1": 1, "2": 1, "3": 4, "4": 9, "5-6": 12, "7-8": 16, "9-10": 10 }, "clicks_cps": 70 },
+    { "percent": 51.05, "video_seconds": 40, "counts": { "1": 1, "2": 1, "3": 7, "4": 15, "5-6": 27, "7-8": 24, "9-10": 12 }, "clicks_cps": 95 },
+    { "percent": 97.56, "video_seconds": 70, "counts": { "1": 1, "2": 2, "3": 13, "4": 24, "5-6": 48, "7-8": 42, "9-10": 26 }, "clicks_cps": 188 }
+  ]
+}

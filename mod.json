@@ -1,0 +1,1382 @@
+{
+  "geode": "5.11.2",
+  "gd": {
+    "win": "2.2081",
+    "android": "2.2081",
+    "mac": "2.2081",
+    "ios": "2.2081"
+  },
+  "id": "jake.windowpane",
+  "name": "Windowpane",
+  "version": "v2.5.3",
+  "developer": "jake",
+  "description": "Frame-window analysis for Geometry Dash macros: per-click timing windows at 240 Hz, a live counter, click markers and a σ/s difficulty rating.",
+  "tags": [
+    "utility",
+    "enhancement",
+    "offline"
+  ],
+  "settings": {
+    "t-0": {
+      "type": "title",
+      "name": "General"
+    },
+    "enabled": {
+      "type": "bool",
+      "name": "Enable mod",
+      "description": "Master switch. When off, nothing is drawn and no hooks do any work.",
+      "default": true
+    },
+    "show-normal": {
+      "type": "bool",
+      "name": "Show in normal attempts",
+      "description": "Show the sidebar and markers in ordinary (non-practice) attempts.",
+      "default": true
+    },
+    "show-practice": {
+      "type": "bool",
+      "name": "Show in practice mode",
+      "description": "Show the sidebar and markers in practice mode.",
+      "default": true
+    },
+    "show-playback": {
+      "type": "bool",
+      "name": "Show during macro playback",
+      "description": "Show the sidebar and markers when an analyzed macro is loaded.",
+      "default": true
+    },
+    "key-toggle-sidebar": {
+      "type": "keybind",
+      "name": "Toggle sidebar hotkey",
+      "description": "Shows / hides the counter sidebar during a level.",
+      "default": [
+        "F6"
+      ],
+      "category": "gameplay"
+    },
+    "key-analyze": {
+      "type": "keybind",
+      "name": "Start / cancel analysis hotkey",
+      "description": "Starts analysing the loaded macro, or cancels a running analysis.",
+      "default": [
+        "F7"
+      ],
+      "category": "gameplay"
+    },
+    "t-7": {
+      "type": "title",
+      "name": "FPS / TPS"
+    },
+    "tps-note": {
+      "type": "info",
+      "description": "Windows are counted in physics ticks. Display FPS only changes screen redraws.",
+      "name": "Note"
+    },
+    "frame-limiter": {
+      "type": "bool",
+      "name": "Apply display FPS",
+      "description": "Sets the game's frame interval to the display FPS below. Off keeps your FPS settings.",
+      "default": false
+    },
+    "display-fps": {
+      "type": "string",
+      "name": "Display FPS",
+      "description": "Preset display refresh rate.",
+      "default": "60",
+      "one-of": [
+        "60",
+        "120",
+        "144",
+        "240",
+        "360",
+        "custom"
+      ]
+    },
+    "display-fps-custom": {
+      "type": "int",
+      "name": "Custom display FPS",
+      "description": "Used when Display FPS is set to custom.",
+      "default": 75,
+      "min": 10,
+      "max": 1000,
+      "control": {
+        "slider": false
+      }
+    },
+    "t-12": {
+      "type": "title",
+      "name": "Sidebar counter"
+    },
+    "sidebar-enabled": {
+      "type": "bool",
+      "name": "Show sidebar",
+      "description": "The stacked window counter (highest bucket on top).",
+      "default": true
+    },
+    "sidebar-corner": {
+      "type": "string",
+      "name": "Position",
+      "description": "Screen corner the sidebar is anchored to.",
+      "default": "Top-left",
+      "one-of": [
+        "Top-left",
+        "Top-right",
+        "Bottom-left",
+        "Bottom-right",
+        "Custom"
+      ]
+    },
+    "sidebar-margin-x": {
+      "type": "float",
+      "name": "Margin X (% of width)",
+      "description": "Distance from the left/right edge. Default is about 1.5% of the screen width.",
+      "default": 1.5,
+      "min": 0,
+      "max": 50,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-margin-y": {
+      "type": "float",
+      "name": "Margin Y (% of height)",
+      "description": "Distance from the top/bottom edge.",
+      "default": 3.0,
+      "min": 0,
+      "max": 50,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-custom-x": {
+      "type": "float",
+      "name": "Custom X (% of width)",
+      "description": "Only used when Position is Custom. Measured from the left edge.",
+      "default": 2.0,
+      "min": 0,
+      "max": 100,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-custom-y": {
+      "type": "float",
+      "name": "Custom Y (% of height)",
+      "description": "Used when Position is Custom. Distance from the bottom edge to the first row.",
+      "default": 97.0,
+      "min": 0,
+      "max": 100,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-scale": {
+      "type": "float",
+      "name": "Scale",
+      "description": "Overall size multiplier.",
+      "default": 1.0,
+      "min": 0.2,
+      "max": 4.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-text-scale": {
+      "type": "float",
+      "name": "Text scale",
+      "description": "Scale of the bigFont text. 0.5 matches the reference screenshot.",
+      "default": 0.42,
+      "min": 0.1,
+      "max": 2.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-row-spacing": {
+      "type": "float",
+      "name": "Row spacing (% of height)",
+      "description": "Vertical distance between rows. 7% matches the reference screenshot.",
+      "default": 4.9,
+      "min": 2,
+      "max": 20,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-align": {
+      "type": "string",
+      "name": "Alignment",
+      "description": "Left: two left-aligned columns. Right: labels end at the counts. Center: centred labels.",
+      "default": "Left",
+      "one-of": [
+        "Left",
+        "Right",
+        "Center"
+      ]
+    },
+    "sidebar-font": {
+      "type": "string",
+      "name": "Font",
+      "description": "Bitmap font used for the rows.",
+      "default": "bigFont.fnt",
+      "one-of": [
+        "bigFont.fnt",
+        "goldFont.fnt",
+        "chatFont.fnt"
+      ]
+    },
+    "sidebar-outline": {
+      "type": "float",
+      "name": "Extra outline (px)",
+      "description": "Thickens the text outline with extra black copies behind the text.",
+      "default": 0.0,
+      "min": 0,
+      "max": 4,
+      "control": {
+        "slider": true
+      }
+    },
+    "sidebar-opacity": {
+      "type": "int",
+      "name": "Opacity (%)",
+      "description": "Opacity of the whole sidebar.",
+      "default": 100,
+      "min": 5,
+      "max": 100,
+      "control": {
+        "slider": true
+      }
+    },
+    "show-zero-rows": {
+      "type": "bool",
+      "name": "Show rows with zero count",
+      "description": "When off, a row is hidden until its count is above zero.",
+      "default": true
+    },
+    "extended-rows": {
+      "type": "string",
+      "name": "Extended rows (13-15, 16+)",
+      "description": "Auto: appear only when their count is above 0. Always / Never override that.",
+      "default": "Auto",
+      "one-of": [
+        "Auto",
+        "Always",
+        "Never"
+      ]
+    },
+    "count-style": {
+      "type": "string",
+      "name": "Count style",
+      "description": "Count: number. Count / Total: out of the total. Percent: share of analysed inputs.",
+      "default": "Count",
+      "one-of": [
+        "Count",
+        "Count / Total",
+        "Percent"
+      ]
+    },
+    "show-total-row": {
+      "type": "bool",
+      "name": "Show total row",
+      "description": "Adds a final row with the total number of inputs counted.",
+      "default": false
+    },
+    "sidebar-anim": {
+      "type": "string",
+      "name": "Show / hide animation",
+      "description": "How the sidebar appears and disappears.",
+      "default": "Fade",
+      "one-of": [
+        "None",
+        "Fade",
+        "Slide"
+      ]
+    },
+    "show-sigma": {
+      "type": "bool",
+      "name": "Show σ/s line",
+      "description": "Adds a difficulty line at the bottom of the sidebar.",
+      "default": false
+    },
+    "sigma-hours": {
+      "type": "float",
+      "name": "Assumed completion hours",
+      "description": "The expected time to complete the level from 0% used by the σ/s model.",
+      "default": 24.0,
+      "min": 0.01,
+      "max": 100000
+    },
+    "timings": {
+      "type": "string",
+      "name": "Timings to show",
+      "description": "Window sizes to count, comma separated: 4, 5-6, 16+. Colours come from the bucket rows.",
+      "default": "1,2,3,4,5-6,7-8,9+",
+      "filter": "0123456789,-+; "
+    },
+    "rank-colours": {
+      "type": "bool",
+      "name": "Colour from easiest to hardest",
+      "description": "Shown timings go from light purple (easiest) to red (hardest), whatever their numbers. Off: row colours.",
+      "default": true
+    },
+    "t-35": {
+      "type": "title",
+      "name": "Bucket editor",
+      "description": "Up to nine rows. Ranges: 5, 5-6 or 16+. The highest range is drawn on top."
+    },
+    "t-36": {
+      "type": "title",
+      "name": "Row 1"
+    },
+    "row-1-visible": {
+      "type": "bool",
+      "name": "Row 1 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-1-range": {
+      "type": "string",
+      "name": "Row 1 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "1",
+      "filter": "0123456789,-+; "
+    },
+    "row-1-label": {
+      "type": "string",
+      "name": "Row 1 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-1-extended": {
+      "type": "bool",
+      "name": "Row 1 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-1-label-color": {
+      "type": "color",
+      "name": "Row 1 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        255,
+        75,
+        75
+      ]
+    },
+    "row-1-count-color": {
+      "type": "color",
+      "name": "Row 1 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        255,
+        75,
+        75
+      ]
+    },
+    "row-1-marker-color": {
+      "type": "color",
+      "name": "Row 1 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        255,
+        75,
+        75
+      ]
+    },
+    "t-44": {
+      "type": "title",
+      "name": "Row 2"
+    },
+    "row-2-visible": {
+      "type": "bool",
+      "name": "Row 2 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-2-range": {
+      "type": "string",
+      "name": "Row 2 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "2",
+      "filter": "0123456789,-+; "
+    },
+    "row-2-label": {
+      "type": "string",
+      "name": "Row 2 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-2-extended": {
+      "type": "bool",
+      "name": "Row 2 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-2-label-color": {
+      "type": "color",
+      "name": "Row 2 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        255,
+        154,
+        60
+      ]
+    },
+    "row-2-count-color": {
+      "type": "color",
+      "name": "Row 2 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        255,
+        154,
+        60
+      ]
+    },
+    "row-2-marker-color": {
+      "type": "color",
+      "name": "Row 2 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        255,
+        154,
+        60
+      ]
+    },
+    "t-52": {
+      "type": "title",
+      "name": "Row 3"
+    },
+    "row-3-visible": {
+      "type": "bool",
+      "name": "Row 3 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-3-range": {
+      "type": "string",
+      "name": "Row 3 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "3",
+      "filter": "0123456789,-+; "
+    },
+    "row-3-label": {
+      "type": "string",
+      "name": "Row 3 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-3-extended": {
+      "type": "bool",
+      "name": "Row 3 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-3-label-color": {
+      "type": "color",
+      "name": "Row 3 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        255,
+        226,
+        60
+      ]
+    },
+    "row-3-count-color": {
+      "type": "color",
+      "name": "Row 3 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        255,
+        226,
+        60
+      ]
+    },
+    "row-3-marker-color": {
+      "type": "color",
+      "name": "Row 3 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        255,
+        226,
+        60
+      ]
+    },
+    "t-60": {
+      "type": "title",
+      "name": "Row 4"
+    },
+    "row-4-visible": {
+      "type": "bool",
+      "name": "Row 4 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-4-range": {
+      "type": "string",
+      "name": "Row 4 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "4",
+      "filter": "0123456789,-+; "
+    },
+    "row-4-label": {
+      "type": "string",
+      "name": "Row 4 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-4-extended": {
+      "type": "bool",
+      "name": "Row 4 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-4-label-color": {
+      "type": "color",
+      "name": "Row 4 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        255,
+        255,
+        255
+      ]
+    },
+    "row-4-count-color": {
+      "type": "color",
+      "name": "Row 4 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        255,
+        255,
+        255
+      ]
+    },
+    "row-4-marker-color": {
+      "type": "color",
+      "name": "Row 4 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        255,
+        255,
+        255
+      ]
+    },
+    "t-68": {
+      "type": "title",
+      "name": "Row 5"
+    },
+    "row-5-visible": {
+      "type": "bool",
+      "name": "Row 5 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-5-range": {
+      "type": "string",
+      "name": "Row 5 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "5-6",
+      "filter": "0123456789,-+; "
+    },
+    "row-5-label": {
+      "type": "string",
+      "name": "Row 5 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-5-extended": {
+      "type": "bool",
+      "name": "Row 5 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-5-label-color": {
+      "type": "color",
+      "name": "Row 5 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        107,
+        255,
+        107
+      ]
+    },
+    "row-5-count-color": {
+      "type": "color",
+      "name": "Row 5 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        107,
+        255,
+        107
+      ]
+    },
+    "row-5-marker-color": {
+      "type": "color",
+      "name": "Row 5 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        107,
+        255,
+        107
+      ]
+    },
+    "t-76": {
+      "type": "title",
+      "name": "Row 6"
+    },
+    "row-6-visible": {
+      "type": "bool",
+      "name": "Row 6 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-6-range": {
+      "type": "string",
+      "name": "Row 6 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "7-8",
+      "filter": "0123456789,-+; "
+    },
+    "row-6-label": {
+      "type": "string",
+      "name": "Row 6 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-6-extended": {
+      "type": "bool",
+      "name": "Row 6 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-6-label-color": {
+      "type": "color",
+      "name": "Row 6 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        91,
+        184,
+        255
+      ]
+    },
+    "row-6-count-color": {
+      "type": "color",
+      "name": "Row 6 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        91,
+        184,
+        255
+      ]
+    },
+    "row-6-marker-color": {
+      "type": "color",
+      "name": "Row 6 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        91,
+        184,
+        255
+      ]
+    },
+    "t-84": {
+      "type": "title",
+      "name": "Row 7"
+    },
+    "row-7-visible": {
+      "type": "bool",
+      "name": "Row 7 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-7-range": {
+      "type": "string",
+      "name": "Row 7 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "9-12",
+      "filter": "0123456789,-+; "
+    },
+    "row-7-label": {
+      "type": "string",
+      "name": "Row 7 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-7-extended": {
+      "type": "bool",
+      "name": "Row 7 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": false
+    },
+    "row-7-label-color": {
+      "type": "color",
+      "name": "Row 7 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        106,
+        91,
+        255
+      ]
+    },
+    "row-7-count-color": {
+      "type": "color",
+      "name": "Row 7 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        201,
+        195,
+        255
+      ]
+    },
+    "row-7-marker-color": {
+      "type": "color",
+      "name": "Row 7 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        36,
+        54,
+        217
+      ]
+    },
+    "t-92": {
+      "type": "title",
+      "name": "Row 8"
+    },
+    "row-8-visible": {
+      "type": "bool",
+      "name": "Row 8 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-8-range": {
+      "type": "string",
+      "name": "Row 8 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "12-15",
+      "filter": "0123456789,-+; "
+    },
+    "row-8-label": {
+      "type": "string",
+      "name": "Row 8 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-8-extended": {
+      "type": "bool",
+      "name": "Row 8 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": true
+    },
+    "row-8-label-color": {
+      "type": "color",
+      "name": "Row 8 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        255,
+        107,
+        214
+      ]
+    },
+    "row-8-count-color": {
+      "type": "color",
+      "name": "Row 8 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        255,
+        107,
+        214
+      ]
+    },
+    "row-8-marker-color": {
+      "type": "color",
+      "name": "Row 8 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        255,
+        107,
+        214
+      ]
+    },
+    "t-100": {
+      "type": "title",
+      "name": "Row 9"
+    },
+    "row-9-visible": {
+      "type": "bool",
+      "name": "Row 9 visible",
+      "description": "Untick to remove this row entirely.",
+      "default": true
+    },
+    "row-9-range": {
+      "type": "string",
+      "name": "Row 9 range",
+      "description": "Window sizes counted in this row. Blank disables the row.",
+      "default": "16+",
+      "filter": "0123456789,-+; "
+    },
+    "row-9-label": {
+      "type": "string",
+      "name": "Row 9 label",
+      "description": "Text before the colon. Blank uses the range text.",
+      "default": ""
+    },
+    "row-9-extended": {
+      "type": "bool",
+      "name": "Row 9 is an extended row",
+      "description": "Extended rows follow the Extended rows mode above.",
+      "default": true
+    },
+    "row-9-label-color": {
+      "type": "color",
+      "name": "Row 9 label colour",
+      "description": "Colour of the label.",
+      "default": [
+        226,
+        226,
+        232
+      ]
+    },
+    "row-9-count-color": {
+      "type": "color",
+      "name": "Row 9 count colour",
+      "description": "Colour of the count.",
+      "default": [
+        226,
+        226,
+        232
+      ]
+    },
+    "row-9-marker-color": {
+      "type": "color",
+      "name": "Row 9 marker number colour",
+      "description": "Colour of the window number next to click markers.",
+      "default": [
+        226,
+        226,
+        232
+      ]
+    },
+    "t-108": {
+      "type": "title",
+      "name": "Caption under the percentage"
+    },
+    "nan-enabled": {
+      "type": "bool",
+      "name": "Show caption",
+      "description": "Small grey text directly under the vanilla percentage label.",
+      "default": true
+    },
+    "nan-text": {
+      "type": "string",
+      "name": "Text",
+      "description": "Leave blank to hide the text.",
+      "default": "NaN Counter"
+    },
+    "nan-font": {
+      "type": "string",
+      "name": "Font",
+      "description": "Bitmap font.",
+      "default": "bigFont.fnt",
+      "one-of": [
+        "bigFont.fnt",
+        "goldFont.fnt",
+        "chatFont.fnt"
+      ]
+    },
+    "nan-smallcaps": {
+      "type": "bool",
+      "name": "Small caps",
+      "description": "Capital letters are drawn larger than the rest, like the reference.",
+      "default": true
+    },
+    "nan-size": {
+      "type": "float",
+      "name": "Size",
+      "description": "Text scale.",
+      "default": 0.3,
+      "min": 0.05,
+      "max": 2.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "nan-color": {
+      "type": "color",
+      "name": "Colour",
+      "description": "Text colour.",
+      "default": [
+        154,
+        154,
+        154
+      ]
+    },
+    "nan-opacity": {
+      "type": "int",
+      "name": "Opacity (%)",
+      "description": "About 35-50% matches the reference.",
+      "default": 42,
+      "min": 0,
+      "max": 100,
+      "control": {
+        "slider": true
+      }
+    },
+    "nan-offset-x": {
+      "type": "float",
+      "name": "Offset X",
+      "description": "Horizontal nudge in game units.",
+      "default": 0.0,
+      "min": -200,
+      "max": 200
+    },
+    "nan-offset-y": {
+      "type": "float",
+      "name": "Offset Y",
+      "description": "Vertical nudge in game units.",
+      "default": 0.0,
+      "min": -100,
+      "max": 100
+    },
+    "t-118": {
+      "type": "title",
+      "name": "Click markers"
+    },
+    "marker-enabled": {
+      "type": "bool",
+      "name": "Show markers",
+      "description": "Shows a ring with the window number where each analysed input happened.",
+      "default": true
+    },
+    "marker-size": {
+      "type": "float",
+      "name": "Size",
+      "description": "Multiplier on the default size (9% of the screen height).",
+      "default": 3.0,
+      "min": 0.2,
+      "max": 4.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "marker-outline-color": {
+      "type": "color",
+      "name": "Outline colour",
+      "description": "Colour of the outlines around ring and centre.",
+      "default": [
+        0,
+        0,
+        0
+      ]
+    },
+    "marker-number-pos": {
+      "type": "string",
+      "name": "Number position",
+      "description": "Where the window number sits relative to the ring.",
+      "default": "Left",
+      "one-of": [
+        "Left",
+        "Right",
+        "Above"
+      ]
+    },
+    "marker-number-size": {
+      "type": "float",
+      "name": "Number size",
+      "description": "Multiplier on the window number size.",
+      "default": 0.4,
+      "min": 0.2,
+      "max": 4.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "marker-text-distance": {
+      "type": "float",
+      "name": "Number distance",
+      "description": "Gap between number and ring, in ring widths. Negative moves it onto the ring.",
+      "default": -0.3,
+      "min": -0.5,
+      "max": 2.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "frame-sounds": {
+      "type": "bool",
+      "name": "Frame sounds",
+      "description": "Plays frame-N.wav for each analysed input during playback (9 and up use frame-9).",
+      "default": true
+    },
+    "frame-sound-volume": {
+      "type": "float",
+      "name": "Frame sound volume",
+      "description": "Volume of the frame sounds.",
+      "default": 1.0,
+      "min": 0.0,
+      "max": 2.0,
+      "control": {
+        "slider": true
+      }
+    },
+    "marker-lifetime": {
+      "type": "float",
+      "name": "Lifetime (seconds)",
+      "description": "0 keeps a marker until it scrolls off screen.",
+      "default": 1.5,
+      "min": 0,
+      "max": 60
+    },
+    "marker-fade": {
+      "type": "bool",
+      "name": "Fade out",
+      "description": "Fade markers instead of popping them.",
+      "default": true
+    },
+    "marker-filter-below": {
+      "type": "int",
+      "name": "Only windows below N",
+      "description": "0 shows every marker. Otherwise only inputs whose window is smaller than N.",
+      "default": 0,
+      "min": 0,
+      "max": 64
+    },
+    "marker-kinds": {
+      "type": "string",
+      "name": "Which inputs",
+      "description": "Presses, releases or both.",
+      "default": "All",
+      "one-of": [
+        "All",
+        "Presses only",
+        "Releases only"
+      ]
+    },
+    "marker-max": {
+      "type": "int",
+      "name": "Max markers on screen",
+      "description": "Pool size. Older markers are recycled first.",
+      "default": 48,
+      "min": 4,
+      "max": 256
+    },
+    "t-132": {
+      "type": "title",
+      "name": "Secondary readout"
+    },
+    "readout-enabled": {
+      "type": "bool",
+      "name": "Show readout",
+      "description": "Small white outlined text in the bottom-left corner: progress % and run time.",
+      "default": false
+    },
+    "readout-time": {
+      "type": "bool",
+      "name": "Show run time",
+      "description": "Adds the run time under the percentage.",
+      "default": true
+    },
+    "readout-x": {
+      "type": "float",
+      "name": "X (% of width)",
+      "description": "Distance from the left edge.",
+      "default": 1.5,
+      "min": 0,
+      "max": 100
+    },
+    "readout-y": {
+      "type": "float",
+      "name": "Y (% of height)",
+      "description": "Distance from the bottom edge to the lower line.",
+      "default": 8.0,
+      "min": 0,
+      "max": 100
+    },
+    "readout-scale": {
+      "type": "float",
+      "name": "Scale",
+      "description": "Text scale.",
+      "default": 0.55,
+      "min": 0.1,
+      "max": 3.0
+    },
+    "readout-color": {
+      "type": "color",
+      "name": "Colour",
+      "description": "Text colour.",
+      "default": [
+        255,
+        255,
+        255
+      ]
+    },
+    "t-139": {
+      "type": "title",
+      "name": "Numbers"
+    },
+    "decimals": {
+      "type": "int",
+      "name": "Decimals",
+      "description": "Digits after the point for window numbers. CBF mode uses at least 2.",
+      "default": 0,
+      "min": 0,
+      "max": 4
+    },
+    "auto-timing": {
+      "type": "bool",
+      "name": "Fix imported macro timing",
+      "description": "If an imported macro dies early, other frame numberings are tried and the best is used.",
+      "default": true
+    },
+    "exact-replay": {
+      "type": "bool",
+      "name": "Exact replay from the start",
+      "description": "Replays every trial from the start (macros up to 30 s). Longer ones use snapshots.",
+      "default": false
+    },
+    "record-stitch": {
+      "type": "bool",
+      "name": "Recording: respawn at practice checkpoints",
+      "description": "On: respawn at your last practice checkpoint the normal way (the game's own checkpoints). Off: every death restarts at 0%.",
+      "default": true
+    },
+    "rebuild-hide-screen": {
+      "type": "bool",
+      "name": "Hide whole screen during respawn",
+      "description": "On: the whole screen is hidden while a checkpoint respawn is rebuilt (beta 2). Off: only the level objects.",
+      "default": false
+    },
+    "auto-repair": {
+      "type": "bool",
+      "name": "Repair macros that die",
+      "description": "Moves the clicks nearest to a death by a few ticks until a macro that dies early survives.",
+      "default": true
+    },
+    "repair-max-shift": {
+      "type": "int",
+      "name": "Repair: max click move (ticks)",
+      "description": "How far a click may be moved while repairing a macro.",
+      "default": 12,
+      "min": 1,
+      "max": 60
+    },
+    "keep-hold": {
+      "type": "bool",
+      "name": "Move the release with the click",
+      "description": "A shifted click moves its release too, so the hold length stays the same.",
+      "default": true
+    },
+    "release-timing": {
+      "type": "string",
+      "name": "Release timings",
+      "description": "Auto: only where releases matter. Always: every release. Never: clicks only.",
+      "default": "Always",
+      "one-of": [
+        "Auto",
+        "Always",
+        "Never"
+      ]
+    },
+    "subtick-auto": {
+      "type": "bool",
+      "name": "Half-tick measurement (experimental)",
+      "description": "Also tries clicks between ticks when the game counts several steps per tick.",
+      "default": false
+    },
+    "cbf-mode": {
+      "type": "bool",
+      "name": "CBF mode (sub-tick clicks)",
+      "description": "Measures windows in fractions of a tick. Needs a game build that honours click timestamps.",
+      "default": false
+    },
+    "cbf-subdivisions": {
+      "type": "int",
+      "name": "CBF steps per tick",
+      "description": "Resolution of the sub-tick search.",
+      "default": 4,
+      "min": 2,
+      "max": 16
+    },
+    "t-152": {
+      "type": "title",
+      "name": "Analysis"
+    },
+    "analysis-speed": {
+      "type": "int",
+      "name": "Speed (x real time)",
+      "description": "Target speed in multiples of real time. Higher is faster if your PC keeps up.",
+      "default": 1000,
+      "min": 1,
+      "max": 2000,
+      "control": {
+        "slider": true
+      }
+    },
+    "auto-throttle": {
+      "type": "bool",
+      "name": "Auto-throttle",
+      "description": "Slows down when frames get long and ramps back up afterwards.",
+      "default": true
+    },
+    "min-fps": {
+      "type": "int",
+      "name": "Minimum FPS while analysing",
+      "description": "The analysis never spends more than 1/this per frame.",
+      "default": 5,
+      "min": 5,
+      "max": 60
+    },
+    "max-shift": {
+      "type": "int",
+      "name": "Max shift each side (ticks)",
+      "description": "How far an input is moved before it counts as 'unbounded'. 5 matches the reference frame window counter (it never looks past 5 ticks each way, so a click with 5 ticks of room on both sides is an 11-tick window and is not counted in the 1-10 rows). Raise it to measure wider windows.",
+      "default": 5,
+      "min": 1,
+      "max": 64
+    },
+    "max-trials": {
+      "type": "int",
+      "name": "Max trials per input",
+      "description": "Hard cap on re-simulations for one input.",
+      "default": 120,
+      "min": 4,
+      "max": 400
+    },
+    "horizon-inputs": {
+      "type": "int",
+      "name": "Survive next N inputs",
+      "description": "A shifted input must survive this many later inputs, plus the tail below.",
+      "default": 2,
+      "min": 1,
+      "max": 32
+    },
+    "horizon-tail": {
+      "type": "int",
+      "name": "Tail after last input (ticks)",
+      "description": "Extra ticks that must be survived.",
+      "default": 14,
+      "min": 0,
+      "max": 240
+    },
+    "horizon-min": {
+      "type": "int",
+      "name": "Minimum horizon (ticks)",
+      "description": "Shortest section checked for a trial.",
+      "default": 48,
+      "min": 4,
+      "max": 480
+    },
+    "horizon-max": {
+      "type": "int",
+      "name": "Maximum horizon (ticks)",
+      "description": "Longest section checked for a trial. Also the infinite-loop guard.",
+      "default": 2400,
+      "min": 30,
+      "max": 4800
+    },
+    "fly-strictness": {
+      "type": "int",
+      "name": "Ship / wave / swing strictness",
+      "description": "0 = same as other modes. Each step checks one more click after a click in ship / wave / swing.",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "converge-ticks": {
+      "type": "int",
+      "name": "Convergence ticks",
+      "description": "A trial ends early after matching the original run for this many ticks in a row.",
+      "default": 12,
+      "min": 2,
+      "max": 60
+    },
+    "rejoin-extra": {
+      "type": "int",
+      "name": "Keep checking while off-course (ticks)",
+      "description": "Extra ticks checked past the horizon while a shifted run is still off course. 0 = off.",
+      "default": 30,
+      "min": 0,
+      "max": 2400
+    },
+    "verify-boundaries": {
+      "type": "bool",
+      "name": "Re-check every window edge",
+      "description": "Replays the edge of each window to the end with no early exit. Lowers it if it dies.",
+      "default": true
+    },
+    "recheck-tight": {
+      "type": "bool",
+      "name": "Re-check tight clicks at the end",
+      "description": "Measures every click with a window of 1-3 ticks once more at the end, strictly. Slower.",
+      "default": false
+    },
+    "fidelity-selftest": {
+      "type": "bool",
+      "name": "Snapshot self-test",
+      "description": "Re-simulates 16 ticks twice from each snapshot to check both runs match.",
+      "default": true
+    },
+    "fidelity-longselftest": {
+      "type": "bool",
+      "name": "Check snapshots over the whole trial",
+      "description": "Checks snapshots over a whole trial. Bad snapshots fall back to replaying from the start.",
+      "default": true
+    },
+    "local-start": {
+      "type": "bool",
+      "name": "Start trials just before the click",
+      "description": "When a snapshot does not restore bit-exactly, still start each trial from it (a few ticks before the click) and set the player's position, velocity and rotation to what the first pass had there, instead of replaying from an earlier snapshot or from the start. Much faster deeper into a level.",
+      "default": true
+    },
+    "fast-search": {
+      "type": "bool",
+      "name": "Fast window search",
+      "description": "Shifts 1-8 are tried one by one as before; past 8 the search jumps outwards and bisects, so wide windows need far fewer trials. Turn off to try every shift one by one.",
+      "default": true
+    },
+    "mute-analysis": {
+      "type": "bool",
+      "name": "Mute audio while analysing",
+      "description": "Recommended: checkpoint loads would otherwise seek the music thousands of times.",
+      "default": true
+    },
+    "t-170": {
+      "type": "title",
+      "name": "Export"
+    },
+    "export-on-finish": {
+      "type": "bool",
+      "name": "Save JSON when analysis finishes",
+      "description": "Writes <macro>.windows.json next to the macro.",
+      "default": true
+    },
+    "screenshot-mode": {
+      "type": "bool",
+      "name": "Screenshot mode",
+      "description": "Hides pause and practice buttons and attempt labels, leaving the sidebar and markers.",
+      "default": false
+    },
+    "btn-save-json": {
+      "type": "button",
+      "name": "Save results now",
+      "description": "Writes the JSON for the current results.",
+      "buttons": {
+        "btn-save-json": "Save JSON"
+      }
+    },
+    "btn-copy-summary": {
+      "type": "button",
+      "name": "Copy summary",
+      "description": "Copies a text summary of the current results to the clipboard.",
+      "buttons": {
+        "btn-copy-summary": "Copy"
+      }
+    },
+    "btn-open-folder": {
+      "type": "button",
+      "name": "Macros folder",
+      "description": "Opens the folder Windowpane reads macros from.",
+      "buttons": {
+        "btn-open-folder": "Open"
+      }
+    }
+  }
+}
