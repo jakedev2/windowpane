@@ -417,8 +417,6 @@ void Session::clearPracticeCheckpoints(PlayLayer* pl) {
             if (pl->m_checkpointArray->count() >= before) break;
         }
     }
-    // PlayLayer::m_currentCheckpoint is a plain pointer: it must not outlive the checkpoint it points to.
-    if (pl->m_checkpointArray->count() == 0) pl->m_currentCheckpoint = nullptr;
 }
 
 void Session::beginExactRespawn(PlayLayer* pl, int64_t target) {
@@ -432,11 +430,9 @@ void Session::beginExactRespawn(PlayLayer* pl, int64_t target) {
     std::stable_sort(m_ffEvents.begin(), m_ffEvents.end(), [](InputEvent const& a, InputEvent const& b) { return a.tick < b.tick; });
     // The game restarts from the checkpoint list it sees: give it an empty one so it starts from the very beginning.
     m_ffSaved = pl->m_checkpointArray;
-    m_ffCurrent = pl->m_currentCheckpoint;
     m_ffTemp = CCArray::create();
     m_ffTemp->retain();
     pl->m_checkpointArray = m_ffTemp;
-    pl->m_currentCheckpoint = nullptr;
     // The rebuild (restart + fast-forward) must not be seen: hide the level objects and players (the background stays, so no
     // black screen) until the checkpoint is reached, then show the level at the checkpoint in one go.
     m_ffHideAll = cfg().rebuildHideScreen;
@@ -461,16 +457,13 @@ void Session::ffRestore(PlayLayer* pl) {
             pl->removeCheckpoint(false);
             if (m_ffTemp->count() >= before) break;
         }
-        pl->m_currentCheckpoint = nullptr;
         if (m_ffSaved) pl->m_checkpointArray = m_ffSaved;
-        pl->m_currentCheckpoint = m_ffCurrent;
     }
     if (m_ffTemp) {
         // Never free a list that still holds checkpoints the game knows about: leaking it is harmless, a dangling one is not.
         if (m_ffTemp->count() == 0) m_ffTemp->release();
         m_ffTemp = nullptr;
     }
-    m_ffCurrent = nullptr;
     m_ffSaved = nullptr;
     if (m_ffLabel) { m_ffLabel->removeFromParent(); m_ffLabel = nullptr; }
     if (pl && m_ffHidden) {
@@ -602,7 +595,7 @@ static std::string frameSoundFile(int n) {
     auto bytes = frameSoundBytes(n);
     if (!bytes.data) return {};
     std::error_code ec;
-    const auto dir = Mod::get()->getSaveDir() / "sounds";
+    const auto dir = Mod::get()->getSaveDir().toStdPath().unwrapOrDefault() / "sounds";
     std::filesystem::create_directories(dir, ec);
     const auto file = dir / fmt::format("frame-{}.wav", n);
     bool need = true;

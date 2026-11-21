@@ -107,9 +107,9 @@ uint64_t deepHash(PlayerObject* p) {
     }
     {
         uint64_t acc = 0;
-        for (auto const& k : p->m_ringRelatedSet) { Mix e; e.i(k); acc += e.h; }
+        for (auto const& k : p->m_usedRings) { Mix e; e.i(k); acc += e.h; }
         m.u(acc);
-        m.u(p->m_ringRelatedSet.size());
+        m.u(p->m_usedRings.size());
     }
     {
         uint64_t acc = 0;
@@ -119,9 +119,9 @@ uint64_t deepHash(PlayerObject* p) {
     }
     {
         uint64_t acc = 0;
-        for (auto const& kv : p->m_jumpPadRelated) { Mix e; e.i(kv.first); e.b(kv.second); acc += e.h; }
+        for (auto const& kv : p->m_touchedForceIds) { Mix e; e.i(kv.first); e.b(kv.second); acc += e.h; }
         m.u(acc);
-        m.u(p->m_jumpPadRelated.size());
+        m.u(p->m_touchedForceIds.size());
     }
     return m.h;
 }

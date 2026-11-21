@@ -2,6 +2,7 @@
 #include "../core/Types.hpp"
 
 #include <filesystem>
+#include <asp/fs/std.hpp>
 #include <string>
 
 namespace wp {

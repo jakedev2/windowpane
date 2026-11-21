@@ -8,6 +8,7 @@
 
 #include <Geode/Geode.hpp>
 #include <filesystem>
+#include <asp/fs/std.hpp>   // Geode v6 returns asp::fs::Path; convert to/from std::filesystem::path
 #include <memory>
 #include <string>
 #include <vector>
@@ -148,7 +149,6 @@ private:
     std::vector<InputEvent> m_ffEvents;
     geode::Ref<cocos2d::CCArray> m_ffSaved;       // the real checkpoint list while the game sees an empty one
     bool m_ffHideAll = false;
-    CheckpointObject* m_ffCurrent = nullptr;      // PlayLayer::m_currentCheckpoint as it was before the respawn
     cocos2d::CCArray* m_ffTemp = nullptr;
     geode::Ref<cocos2d::CCLabelBMFont> m_ffLabel;
     bool m_ffHidden = false;

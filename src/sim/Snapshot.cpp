@@ -1,7 +1,9 @@
 #include "Snapshot.hpp"
 #include "../core/Types.hpp"
 
+#include <algorithm>
 #include <type_traits>
+#include <vector>
 #include <utility>
 
 using namespace geode::prelude;
@@ -9,6 +11,19 @@ using namespace geode::prelude;
 namespace wp::sim {
 
 namespace {
+// Removes every entry of a checkpoint dictionary that points at `obj` (the dictionary may be int- or string-keyed).
+void dropFromDict(cocos2d::CCDictionary* dict, cocos2d::CCObject* obj) {
+    if (!dict || !obj || dict->count() == 0) return;
+    if (dict->m_eDictType == cocos2d::CCDictionary::kCCDictInt) {
+        std::vector<int> keys;
+        for (auto [k, v] : CCDictionaryExt<int, cocos2d::CCObject*>(dict)) if (v == obj) keys.push_back(k);
+        for (int k : keys) dict->removeObjectForKey(static_cast<intptr_t>(k));
+    } else {
+        std::vector<std::string> keys;
+        for (auto [k, v] : CCDictionaryExt<std::string_view, cocos2d::CCObject*>(dict)) if (v == obj) keys.emplace_back(k);
+        for (auto const& k : keys) dict->removeObjectForKey(k);
+    }
+}
 // Orbs / pads / portals / triggers remember that they were used (GameObject::hasBeenActivatedByPlayer). The member that holds this is not
 // named in these bindings, so it is read through the game's own getter and cleared through the game's own GameObject::resetObject, which
 // is what a normal respawn calls on every object. resetObject is looked up at compile time: if a binding version lacks it, nothing is reset.
@@ -35,16 +50,15 @@ bool Snapshot::capture(PlayLayer* pl) {
     // createCheckpoint() is what practice mode calls when it drops a checkpoint. In some game builds it
     // also appends to m_checkpointArray; our snapshots must never show up as practice checkpoints.
     const unsigned before = pl->m_checkpointArray ? pl->m_checkpointArray->count() : 0;
-    // PlayLayer::m_currentCheckpoint is a plain (not retained) pointer. A snapshot must never become it: when the snapshot is
-    // dropped the checkpoint is deleted and the game would be left pointing at it (crash on the next death in practice mode).
-    CheckpointObject* const prevCurrent = pl->m_currentCheckpoint;
+    // 2.2091 dropped PlayLayer::m_currentCheckpoint in favour of m_checkpointsDict. A snapshot must never stay registered with
+    // the game, so anything createCheckpoint() adds for it (array or dictionary) is taken out again right away.
     CheckpointObject* cp = pl->createCheckpoint();
-    if (!cp) { pl->m_currentCheckpoint = prevCurrent; return false; }
+    if (!cp) return false;
     checkpoint = cp;   // Ref retains
     if (pl->m_checkpointArray) {
         while (pl->m_checkpointArray->count() > before) pl->m_checkpointArray->removeLastObject();
     }
-    pl->m_currentCheckpoint = prevCurrent;
+    dropFromDict(pl->m_checkpointsDict, cp);
 
     used.clear();
     objCount = 0;
@@ -81,9 +95,7 @@ bool Snapshot::restore(PlayLayer* pl) const {
     const ModeFlags pre1 = ModeFlags::of(pl->m_player1);
     const ModeFlags pre2 = ModeFlags::of(pl->m_player2);
 
-    CheckpointObject* const prevCurrent = pl->m_currentCheckpoint;   // see capture(): never leave the game pointing at a snapshot
     pl->loadFromCheckpoint(checkpoint);
-    pl->m_currentCheckpoint = prevCurrent;
 
     // Orbs / pads / portals the first pass or an earlier trial used after this snapshot was taken are still marked as used: a normal
     // respawn resets every object before it loads a checkpoint, this load alone does not, so the click on such an orb did nothing in every

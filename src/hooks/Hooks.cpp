@@ -133,9 +133,9 @@ bool analysing() { return wp::sim::SimState::get().trialActive || wp::sim::Analy
 }
 
 class $modify(WPPlayLayer, PlayLayer) {
-    bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
+    bool init(GJGameLevel* level, bool dontCreateObjects) {   // 2.2091 dropped the useReplay argument
         g_cpVel.clear();
-        return PlayLayer::init(level, useReplay, dontCreateObjects);
+        return PlayLayer::init(level, dontCreateObjects);
     }
 
     CheckpointObject* createCheckpoint() {

@@ -64,10 +64,10 @@ $on_mod(Loaded) {
     ButtonSettingPressedEventV3(Mod::get(), "btn-copy-summary").listen([](std::string_view) { wp::ui::copySummary(); }).leak();
     ButtonSettingPressedEventV3(Mod::get(), "btn-open-folder").listen([](std::string_view) {
         auto& S = wp::Session::get();
-        std::filesystem::path dir = Mod::get()->getSaveDir() / "results";
+        std::filesystem::path dir = Mod::get()->getSaveDir().toStdPath().unwrapOrDefault() / "results";
         if (auto m = S.macro(); m && !m->path.empty()) dir = std::filesystem::u8path(m->path).parent_path();
         std::error_code ec;
         std::filesystem::create_directories(dir, ec);
-        file::openFolder(dir);
+        file::openFolder(asp::fs::Path::fromStdPath(dir));
     }).leak();
 }
