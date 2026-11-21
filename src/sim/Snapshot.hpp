@@ -16,6 +16,10 @@ struct Snapshot {
     uint64_t replayRandSeed = 0;
     int currentStep = 0;
     uint32_t tick = 0;       // tick (progress / progressPerTick) when captured
+    // Game clocks the checkpoint does not carry. PlayerObject::m_lastJumpTime is stamped from one of them, so without these a
+    // restored run stamped different jump times than the original ("hidden player state differs after restore: m_lastJumpTime"),
+    // and runs that had re-joined the original were not identical to it.
+    double timePlayed = 0, attemptTime = 0, currentTime = 0, stateTotalTime = 0, stateLevelTime = 0;
 
     // Which orbs / pads / portals had already been used when the snapshot was taken (index into PlayLayer::m_objects, bit 0 = player 1,
     // bit 1 = player 2). The game's own checkpoint load does not reset these flags (a normal respawn resets every object first), so

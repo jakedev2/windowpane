@@ -113,6 +113,12 @@ void Cfg::reload() {
         mod->setSettingValue<std::string>("release-timing", "Always");
         mod->setSavedValue<int>("release-profile", 2);
     }
+    // One-time (2.6.0): count clicks only, like the reference counter. Releases (mostly ship / wave) were most of the 1-3 frame
+    // windows in the sidebar, which the reference never shows. Also replaces stale values such as "By game mode".
+    if (mod->getSavedValue<int>("release-profile", 0) < 4) {
+        mod->setSettingValue<std::string>("release-timing", "Never");
+        mod->setSavedValue<int>("release-profile", 4);
+    }
     // One-time: row 8 is pink for 12-15 frames and row 9 (16+) is a greyish white.
     if (mod->getSavedValue<int>("colour-profile", 0) < 1) {
         if (mod->getSettingValue<std::string>("row-8-range") == "13-15") mod->setSettingValue<std::string>("row-8-range", "12-15");

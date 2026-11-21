@@ -8,7 +8,7 @@
   },
   "id": "jake.windowpane",
   "name": "Windowpane",
-  "version": "v2.6.0",
+  "version": "v2.6.1",
   "developer": "jake",
   "description": "Frame-window analysis for Geometry Dash macros: per-click timing windows at 240 Hz, a live counter, click markers and a σ/s difficulty rating.",
   "tags": [
@@ -1167,8 +1167,8 @@
     "release-timing": {
       "type": "string",
       "name": "Release timings",
-      "description": "Auto: only where releases matter. Always: every release. Never: clicks only.",
-      "default": "Always",
+      "description": "Never: clicks only (default; the reference frame window counter only counts clicks). Auto: also releases where they matter (ship, wave, ...). Always: every release.",
+      "default": "Never",
       "one-of": [
         "Auto",
         "Always",

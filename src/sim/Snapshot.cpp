@@ -81,6 +81,11 @@ bool Snapshot::capture(PlayLayer* pl) {
     randomSeed = pl->m_randomSeed;
     replayRandSeed = pl->m_replayRandSeed;
     currentStep = pl->m_currentStep;
+    timePlayed = pl->m_timePlayed;
+    attemptTime = pl->m_attemptTime;
+    currentTime = pl->m_currentTime;
+    stateTotalTime = pl->m_gameState.m_totalTime;
+    stateLevelTime = pl->m_gameState.m_levelTime;
     tick = ticksOf(pl->m_gameState.m_currentProgress);
     return true;
 }
@@ -124,6 +129,11 @@ bool Snapshot::restore(PlayLayer* pl) const {
     pl->m_randomSeed = randomSeed;
     pl->m_replayRandSeed = replayRandSeed;
     pl->m_currentStep = currentStep;
+    pl->m_timePlayed = timePlayed;
+    pl->m_attemptTime = attemptTime;
+    pl->m_currentTime = currentTime;
+    pl->m_gameState.m_totalTime = stateTotalTime;
+    pl->m_gameState.m_levelTime = stateLevelTime;
     pl->m_extraDelta = 0.0;          // the stepper feeds exact 1/240 s deltas; no leftover time
     pl->m_resumeTimer = 0;           // vanilla "resume" countdown would swallow steps
     pl->m_queuedButtons.clear();

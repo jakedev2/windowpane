@@ -387,12 +387,13 @@ void fitLabel(CCLabelBMFont* l, float maxW, float maxH, float maxScale) {
     l->setScale(std::max(s, 0.05f));
 }
 
-CCScale9Sprite* makePanel(float w, float h, GLubyte opacity) {
-    auto* bg = CCScale9Sprite::create("square02b_001.png");
-    bg->setContentSize({w, h});
-    bg->setColor({0, 0, 0});
-    bg->setOpacity(opacity);
-    return bg;
+// Rounded rectangles are drawn as polygons (Theme.cpp's shapeRound, same as the main menu). CCScale9Sprite with
+// square02b_001.png has ~27 px corner slices: on shapes thinner than that (the button gloss, small buttons) the slices
+// overflowed and drew a grey box above every button under GD 2.2091.
+static float rrRadius(float w, float h) { return std::max(0.f, std::min({8.f, w / 2.f, h / 2.f})); }
+
+CCNode* makePanel(float w, float h, GLubyte opacity) {
+    return shapeRound(w, h, rrRadius(w, h), {0, 0, 0}, opacity);
 }
 
 // Splits the exported summary into a short header plus a few compact lines of "label: count" entries.
@@ -440,18 +441,14 @@ void syncTheme() {
     kBadC = T.bad;
 }
 
-CCScale9Sprite* roundRect(float w, float h, ccColor3B c, GLubyte op) {
-    auto* s = CCScale9Sprite::create("square02b_001.png");
-    s->setContentSize({w, h});
-    s->setColor(c);
-    s->setOpacity(op);
-    return s;
+CCNode* roundRect(float w, float h, ccColor3B c, GLubyte op) {
+    return shapeRound(w, h, rrRadius(w, h), c, op);
 }
 
 struct Btn {
     CCMenuItemSpriteExtra* item = nullptr;
     CCLabelBMFont* label = nullptr;
-    CCScale9Sprite* bg = nullptr;
+    CCNode* bg = nullptr;
     float w = 0.f, h = 0.f;
 };
 
@@ -482,7 +479,14 @@ Btn makeButton(std::string const& text, ccColor3B color, float w, float h, CCObj
 void setButton(Btn& b, std::string const& text, ccColor3B color) {
     b.label->setString(text.c_str());
     fitLabel(b.label, b.w - 14.f, b.h - 9.f, .5f);
-    b.bg->setColor(color);
+    // A drawn shape has no tint: replace it with one in the new colour.
+    if (auto* parent = b.bg->getParent()) {
+        auto* nb = roundRect(b.w, b.h, color, 255);
+        nb->setPosition(b.bg->getPosition());
+        parent->addChild(nb, b.bg->getZOrder());
+        b.bg->removeFromParent();
+        b.bg = nb;
+    }
 }
 
 CCLabelBMFont* makeText(std::string const& s, char const* font, float scale, ccColor3B c, CCPoint pos, CCPoint anchor = {0.f, 0.5f}) {

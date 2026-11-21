@@ -245,6 +245,8 @@ void Session::refresh() {
     for (size_t i = 0; i < m_result->inputs.size(); ++i) {
         auto const& r = m_result->inputs[i];
         if (r.status != InputStatus::Measured && r.status != InputStatus::Capped) continue;
+        // "Never" = clicks only, also for results analysed earlier with releases measured.
+        if (c.releaseTiming == "Never" && m_macro && i < m_macro->inputs.size() && !m_macro->inputs[i].down) continue;
         int b = bucketIndexFor(c, r.window);
         m_bucket[i] = b;
         if (b >= 0) ++m_totals[b];
@@ -659,8 +661,8 @@ void Session::playFrameSound(size_t eventIndex) {
     if (eventIndex >= m_soundWindow.size() || eventIndex >= m_macro->inputs.size()) return;
     const float w = m_soundWindow[eventIndex];
     if (w < 0.f) return;
-    // Only clicks (presses) make a sound; releases only when release timings are set to "Always".
-    if (!m_macro->inputs[eventIndex].down && c.releaseTiming != "Always") return;
+    // Every input the sidebar counts makes a sound. (Releases used to need "Always" here while the analysis also measured and
+    // counted them under "Auto" / older values, so counted releases were silent.)
     // Only windows that are among the "Timings to show".
     refresh();
     if (bucketOf(eventIndex) < 0) return;
