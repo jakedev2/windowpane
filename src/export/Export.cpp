@@ -158,7 +158,7 @@ std::string exportJson(Macro const& m, AnalysisResult const& r, std::filesystem:
     }
     std::error_code ec;
     if (dir.empty() || !std::filesystem::exists(dir, ec)) {
-        dir = Mod::get()->getSaveDir() / "results";
+        dir = Mod::get()->getSaveDir().toStdPath().unwrapOrDefault() / "results";
         std::filesystem::create_directories(dir, ec);
     }
     outPath = dir / (stem + ".windows.json");

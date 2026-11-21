@@ -1,14 +1,14 @@
 {
-  "geode": "5.11.2",
+  "geode": "6.0.0-beta.1",
   "gd": {
-    "win": "2.2081",
-    "android": "2.2081",
-    "mac": "2.2081",
-    "ios": "2.2081"
+    "win": "2.2091",
+    "android": "2.2091",
+    "mac": "2.2091",
+    "ios": "2.2091"
   },
   "id": "jake.windowpane",
   "name": "Windowpane",
-  "version": "v2.5.3",
+  "version": "v2.6.0",
   "developer": "jake",
   "description": "Frame-window analysis for Geometry Dash macros: per-click timing windows at 240 Hz, a live counter, click markers and a σ/s difficulty rating.",
   "tags": [

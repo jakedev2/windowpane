@@ -713,7 +713,7 @@ protected:
             });
         if (!started) toast("A file dialog is already open.", NotificationIcon::Warning);
 #else
-        auto path = Mod::get()->getSaveDir() / "macros" / (base + ".wpmacro");
+        auto path = Mod::get()->getSaveDir().toStdPath().unwrapOrDefault() / "macros" / (base + ".wpmacro");
         std::error_code ec;
         std::filesystem::create_directories(path.parent_path(), ec);
         writeMacro(path);

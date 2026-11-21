@@ -68,9 +68,11 @@ void pickMacroOfType(MacroType type, std::function<void()> done) {
     f.description = macroTypeName(type);
     for (auto const& e : macroTypeExtensions(type)) f.files.insert("*" + e);
     opts.filters.push_back(std::move(f));
-    async::spawn(file::pick(file::PickMode::OpenFile, opts), [done = std::move(done), type](Result<std::optional<std::filesystem::path>> res) {
+    async::spawn(file::pick(file::PickMode::OpenFile, opts), [done = std::move(done), type](file::PickResult res) {
         if (res.isErr()) { alert("Windowpane", res.unwrapErr()); return; }
-        finishPick(std::move(res).unwrap(), type, done);
+        std::optional<std::filesystem::path> picked;
+        if (auto p = std::move(res).unwrap()) picked = p->toStdPath().unwrapOrDefault();
+        finishPick(std::move(picked), type, done);
     });
 #endif
 }

@@ -2,7 +2,7 @@
 """
 Generates src/sim/PlayerFields.inc from the Geode bindings for the GD version you build against.
 
-    python tools/gen_player_extra.py <path-to>/bindings/bindings/2.2081/GeometryDash.bro > src/sim/PlayerFields.inc
+    python tools/gen_player_extra.py <path-to>/bindings/bindings/2.2091/GeometryDash.bro > src/sim/PlayerFields.inc
 
 Why this exists
 ---------------
@@ -43,13 +43,13 @@ SKIP_NAME = re.compile(
 SKIP_TYPE = re.compile(
     r"(CCSprite|CCNode|CCLayer|CCArray|CCDictionary|CCMotionStreak|HardStreak|PlayerFireBoostSprite|"
     r"GJRobotSprite|GJSpiderSprite|GhostTrailEffect|CCSpriteBatchNode|CCParticleSystemQuad|"
-    r"GJBaseGameLayer|GJActionManager|CheckpointObject|ccColor3B|ccColor4B|ShipStreak|GhostType|gd::string)"
+    r"GJBaseGameLayer|GJActionManager|CheckpointObject|ccColor3B|ccColor4B|ShipStreak|GhostType|std::string)"
 )
 OK_TYPE = re.compile(
     r"^(bool|int|unsigned int|unsigned char|char|short|float|double|uint64_t|int64_t|"
     r"cocos2d::CCPoint|geode::SeedValue\w+|"
     r"(?:GameObject|DashRingObject|SlopeObject)\s*\*|"
-    r"gd::(?:unordered_map|unordered_set|map|vector)<.*>)$"
+    r"(?:gd|std)::(?:unordered_map|unordered_set|map|vector)<.*>)$"
 )
 
 out = []

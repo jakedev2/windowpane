@@ -8,10 +8,12 @@ else()
 endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-# Use the 64-bit MSVC compiler. The default Visual Studio toolset runs the 32-bit cl.exe, which runs out of memory
-# during "Generating Code..." on large Geode files and dies with exit code -1073741819 (0xC0000005).
-if (CMAKE_GENERATOR MATCHES "Visual Studio")
-    set(CMAKE_GENERATOR_TOOLSET "host=x64" CACHE STRING "" FORCE)
+# Geode v6 headers (e.g. utils/file.hpp) trip MSVC's cl.exe with C3615 (constexpr constructors calling non-constexpr
+# asp::fs::Error), so build with clang-cl, which is what Geode itself is built with on Windows. The 64-bit host is
+# kept: the 32-bit toolchain runs out of memory on large Geode files (exit code 0xC0000005).
+# Pass -T <toolset> yourself to override (e.g. -T host=x64 to go back to cl.exe).
+if (CMAKE_GENERATOR MATCHES "Visual Studio" AND NOT CMAKE_GENERATOR_TOOLSET)
+    set(CMAKE_GENERATOR_TOOLSET "ClangCL,host=x64" CACHE STRING "" FORCE)
 endif()
 
 project(Windowpane VERSION 2.5.2)
@@ -20,7 +22,11 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 
-if (MSVC)
+# The /Od + per-file /O2 workaround below is only for cl.exe. clang-cl optimises normally (and a per-file
+# optimisation level that differs from the precompiled header is rejected by clang).
+if (MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE /bigobj)
+elseif (MSVC)
     # cl.exe previously crashed (0xC0000005) in whole-program code generation. Keep /GL- and one compiler process
     # at a time. The UI remains unoptimised below; the analysis hot files selectively get /O2 after setup_geode_mod.
     target_compile_options(${PROJECT_NAME} PRIVATE /MP1 /bigobj /Od /GL-)
@@ -46,7 +52,7 @@ setup_geode_mod(${PROJECT_NAME})
 # The old log showed cl.exe dying in whole-program code generation. Only the analysis hot files are optimised by
 # default, without /GL. If a compiler still crashes, -DWP_NOOPT_ALL=ON restores the old all-/Od fallback.
 option(WP_NOOPT_ALL "Build all Windowpane sources with /Od" OFF)
-if (MSVC)
+if (MSVC AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     if (WP_NOOPT_ALL)
         target_compile_options(${PROJECT_NAME} PRIVATE /Od)
     else()

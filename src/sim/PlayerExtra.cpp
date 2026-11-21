@@ -107,7 +107,7 @@ bool same(T const& a, T const& b) {
         auto ca = a;
         auto cb = b;
         return ca.value() == cb.value();
-    } else if constexpr (std::is_same_v<T, gd::unordered_map<int, GJPointDouble>>) {
+    } else if constexpr (std::is_same_v<T, std::unordered_map<int, GJPointDouble>>) {
         // GJPointDouble has no operator==, so std::unordered_map's would not compile
         if (a.size() != b.size()) return false;
         for (auto const& [k, v] : a) {
